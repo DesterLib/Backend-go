@@ -17,3 +17,12 @@
 # Ignore binaries 
 dester
 backend-go
+
+# Old dester backend 
+old/
+
+# build
+build/
+
+# config file
+config.json
