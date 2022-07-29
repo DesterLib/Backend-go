@@ -21,9 +21,7 @@ const (
 var ValueOf = &config{}
 
 type config struct {
-	MongoDomain      string
-	MongoUsername    string
-	MongoPassword    string
+	DatabaseURI      string
 	Port             int
 	RcloneListenPort int
 	DesterDev        bool
