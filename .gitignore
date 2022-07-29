@@ -26,3 +26,4 @@ build/
 
 # config file
 config.json
+.env
