@@ -16,6 +16,7 @@ type Config struct {
 	Subtitles  ApiService `json:"subtitles"`
 	Rclone     Rclone     `json:"rclone"`
 	Build      Build      `json:"build"`
+	Categories []Category `json:"categories,omitempty"`
 }
 
 // {"auth0":{},"categories":[],"gdrive":{},"onedrive":{},"sharepoint":{},"tmdb":{"api_key":"ygy"},"subtitles":{"api_key":"gyg"},"build":{"cron":"gygy"},"rclone":{},"app":{"name":"feuh","title":"uhuhu","description":"hu","domain":"huh","secret_key":"uhhu"}}
@@ -27,8 +28,17 @@ type App struct {
 	SecretKey   string `json:"secret_key,omitempty"`
 }
 
+type Category struct {
+	Adult   bool   `json:"adult,omitempty"`
+	Anime   bool   `json:"anime,omitempty"`
+	Name    string `json:"name,omitempty"`
+	Id      string `json:"id,omitempty"`
+	DriveId string `json:"drive_id,omitempty"`
+}
+
 type ApiService struct {
 	ApiKey string `json:"api_key,omitempty"`
+	Local  bool   `json:"local,omitempty"`
 }
 
 type Build struct {
@@ -39,9 +49,16 @@ type Rclone struct {
 }
 
 type Auth0 struct {
+	Domain       string `json:"domain,omitempty"`
+	ClientId     string `json:"client_id,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"`
 }
 
 type Hosting struct {
+	ClientId     string `json:"client_id,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"`
+	AccessToken  string `json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 }
 
 type ConfigDB struct {

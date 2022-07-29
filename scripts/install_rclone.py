@@ -1,17 +1,16 @@
 import logging
+import os
+import shutil
+import pathlib
+import zipfile
+import platform
+import requests
 
 
 logger = logging.getLogger("rclone_installer")
 
 
 def download_rclone() -> str:
-    import os
-    import shutil
-    import pathlib
-    import zipfile
-    import platform
-    import requests
-
     if shutil.which("rclone"):
         logger.warning("rclone is already installed")
         return shutil.which("rclone")

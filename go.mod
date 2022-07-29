@@ -6,6 +6,7 @@ require (
 	github.com/allegro/bigcache v1.2.1-0.20190218064605-e24eb225f156
 	github.com/anonyindian/logger v1.0.0-alpha.3
 	github.com/gin-gonic/gin v1.8.1
+	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.6
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
@@ -27,7 +28,6 @@ require (
 	github.com/jackc/pgx/v4 v4.16.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

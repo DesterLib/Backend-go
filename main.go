@@ -24,7 +24,7 @@ func main() {
 	cache.Load(log)
 	db.LoadDB(log)
 	router := gin1(log)
-	log.Printlnf("STARTED AT PORT: '%d'", config.ValueOf.Port)
+	log.Printlnf("STARTED AT PORT: '%d'\n", config.ValueOf.Port)
 	router.Run(fmt.Sprintf(":%d", config.ValueOf.Port))
 }
 
