@@ -1,6 +1,7 @@
 package rclone
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
@@ -14,22 +15,18 @@ import (
 func Restart() {
 	var rcloneBin string = "bin/rclone"
 	var cmd *exec.Cmd
+	fmt.Println("searching os")
 	switch runtime.GOOS {
 	case "windows":
 		cmd = exec.Command("powershell.exe", strings.Fields(fmt.Sprintf("powershell.exe Stop-Process -Id (Get-NetTCPConnection -LocalPort %d).OwningProcess -Force", config.ValueOf.RcloneListenPort))...)
 		rcloneBin += ".exe"
-	case "linux":
-		cmd = exec.Command("bash", strings.Fields(fmt.Sprintf("kill $(lsof -t -i:%d)", config.ValueOf.Port))...)
-	case "darwin":
+	case "darwin", "linux":
 		cmd = exec.Command("kill", strings.Fields(fmt.Sprintf("$(lsof -t -i:%d)", config.ValueOf.RcloneListenPort))...)
 	default:
 		fmt.Println("Unsupported OS:", runtime.GOOS)
 		os.Exit(1)
 	}
-	err := cmd.Run()
-	if err != nil {
-		panic(err.Error())
-	}
+	cmd.Run()
 	if !exists(rcloneBin) {
 		cmd = exec.Command("python", "scripts/install_rclone.py")
 		cmd.Run()
@@ -39,9 +36,8 @@ Please download a suitable executable of rclone from 'rclone.org' and move it to
 			//
 		}
 	}
-	cmd = exec.Command(rcloneBin, strings.Fields(fmt.Sprintf("rcd --rc-no-auth --rc-serve --rc-addr localhost:%d --config rclone.conf", config.ValueOf.RcloneListenPort))...)
-	cmd.Run()
-	// os.StartProcess()
+	fmt.Println("running rclone")
+	startRclone(rcloneBin)
 }
 
 func exists(path string) bool {
@@ -49,4 +45,23 @@ func exists(path string) bool {
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-func createProcess(name string, arg []string) {}
+func startRclone(rcloneBin string) {
+	cmd := exec.Command(rcloneBin, strings.Fields(fmt.Sprintf("rcd --rc-no-auth --rc-serve --rc-addr localhost:%d --config rclone.conf", config.ValueOf.RcloneListenPort))...)
+	cmd.Stderr = os.Stdout
+	w, _ := cmd.StdoutPipe()
+	cmd.Start()
+	scanner := bufio.NewScanner(w)
+	scanner.Split(bufio.ScanWords)
+	for scanner != nil && scanner.Scan() {
+		m := scanner.Text()
+		fmt.Println(m)
+	}
+	err := cmd.Wait()
+	if err != nil {
+		fmt.Println("running rclone with osperm")
+		if errors.Is(err, os.ErrPermission) {
+			exec.Command("chmod", "+x", rcloneBin).Run()
+			cmd.Start()
+		}
+	}
+}

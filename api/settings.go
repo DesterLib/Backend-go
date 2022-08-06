@@ -6,6 +6,7 @@ import (
 
 	"github.com/anonyindian/logger"
 	"github.com/desterlib/backend-go/db"
+	"github.com/desterlib/backend-go/rclone"
 	"github.com/desterlib/backend-go/routes"
 	"github.com/desterlib/backend-go/utils"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ func settingsPost(ctx *gin.Context) {
 			return
 		}
 		go db.SaveConfig(b)
+		rclone.Restart()
 	} else {
 		ctx.JSON(http.StatusOK, utils.Response{
 			Code:        http.StatusUnauthorized,
