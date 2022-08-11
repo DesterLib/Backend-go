@@ -42,6 +42,7 @@ func gin1(l *logger.Logger) *gin.Engine {
 	router.Static("static", "build/static")
 	router.StaticFile("favicon.ico", "./build/favicon.ico")
 	router.StaticFile("asset-manifest.json", "./build/asset-manifest.json")
+	router.StaticFile("/", "./build/index.html")
 	router.LoadHTMLFiles("build/index.html")
 	api.Load(router, l)
 	return router
