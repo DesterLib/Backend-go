@@ -1,9 +1,14 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/desterlib/backend-go/types"
+	"github.com/desterlib/backend-go/utils"
 
 	"github.com/anonyindian/logger"
 	"github.com/desterlib/backend-go/api"
@@ -12,6 +17,10 @@ import (
 	"github.com/desterlib/backend-go/db"
 	"github.com/gin-gonic/gin"
 )
+
+var versionString string = "0.0.1"
+
+var startTime time.Time = time.Now()
 
 func main() {
 	log := logger.New(os.Stderr, &logger.LoggerOpts{
@@ -35,15 +44,39 @@ func gin1(l *logger.Logger) *gin.Engine {
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
 	router := gin.Default()
-	router.NoRoute(func(ctx *gin.Context) {
-		ctx.HTML(http.StatusNotFound, "index.html", gin.H{})
+	// set up the middleware for cors
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
 	})
-	router.Static("static", "build/static")
-	router.StaticFile("favicon.ico", "./build/favicon.ico")
-	router.StaticFile("asset-manifest.json", "./build/asset-manifest.json")
-	router.StaticFile("/", "./build/index.html")
-	router.LoadHTMLFiles("build/index.html")
+	if _, err := os.Stat("build"); err == nil {
+		router.NoRoute(func(ctx *gin.Context) {
+			ctx.HTML(http.StatusNotFound, "index.html", gin.H{})
+		})
+		router.Static("static", "build/static")
+		router.StaticFile("favicon.ico", "./build/favicon.ico")
+		router.StaticFile("asset-manifest.json", "./build/asset-manifest.json")
+		router.StaticFile("/", "./build/index.html")
+		router.LoadHTMLFiles("build/index.html")
+	} else if errors.Is(err, os.ErrNotExist) {
+		router.GET("/", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, types.RootResponse{
+				Message: "Backend is working.",
+				Ok:      true,
+				Uptime:  utils.TimeFormat(uint64(time.Since(startTime).Seconds())),
+				Version: versionString,
+			})
+		})
+	} else {
+		panic(err)
+	}
 	api.Load(router, l)
 	return router
 }

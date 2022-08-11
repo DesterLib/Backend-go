@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -55,7 +54,6 @@ func Load(log *logger.Logger) {
 			ValueOf.setupEnvVars()
 		}
 	} else {
-		fmt.Print("Ef")
 		ValueOf.setupEnvVars()
 	}
 	log.ChangeLevel(logger.LevelMain)

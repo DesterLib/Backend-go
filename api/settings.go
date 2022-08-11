@@ -8,7 +8,7 @@ import (
 	"github.com/desterlib/backend-go/db"
 	"github.com/desterlib/backend-go/rclone"
 	"github.com/desterlib/backend-go/routes"
-	"github.com/desterlib/backend-go/utils"
+	"github.com/desterlib/backend-go/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,7 +31,7 @@ func settingsPost(ctx *gin.Context) {
 		go db.SaveConfig(b)
 		rclone.Restart()
 	} else {
-		ctx.JSON(http.StatusOK, utils.Response{
+		ctx.JSON(http.StatusOK, types.DataResponse{
 			Code:        http.StatusUnauthorized,
 			Message:     "The secret key was incorrect.",
 			Ok:          false,
@@ -47,7 +47,7 @@ func settingsGet(ctx *gin.Context) {
 	secret_key := ctx.Query("secret_key")
 	config := db.GetConfig()
 	if secret_key == config.App.SecretKey {
-		ctx.JSON(http.StatusOK, utils.Response{
+		ctx.JSON(http.StatusOK, types.DataResponse{
 			Code:        http.StatusOK,
 			Message:     "Config successfully retrieved from database.",
 			Ok:          true,
@@ -57,7 +57,7 @@ func settingsGet(ctx *gin.Context) {
 			Description: "Dester",
 		})
 	} else {
-		ctx.JSON(http.StatusOK, utils.Response{
+		ctx.JSON(http.StatusOK, types.DataResponse{
 			Code:        http.StatusUnauthorized,
 			Message:     "The secret key was incorrect.",
 			Ok:          false,

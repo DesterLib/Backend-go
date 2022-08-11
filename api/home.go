@@ -6,7 +6,7 @@ import (
 	"github.com/anonyindian/logger"
 	"github.com/desterlib/backend-go/db"
 	"github.com/desterlib/backend-go/routes"
-	"github.com/desterlib/backend-go/utils"
+	"github.com/desterlib/backend-go/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,7 +20,7 @@ func (e *entry) LoadHome(r *routes.Route) {
 func getHome(ctx *gin.Context) {
 	config := db.GetConfig()
 	if config.App.SecretKey == "" {
-		ctx.JSON(http.StatusPreconditionRequired, utils.Response{
+		ctx.JSON(http.StatusPreconditionRequired, types.DataResponse{
 			Code:        http.StatusPreconditionRequired,
 			Message:     "The config needs to be initialized first.",
 			Ok:          false,
@@ -30,7 +30,7 @@ func getHome(ctx *gin.Context) {
 			Description: config.App.Description,
 		})
 	} else {
-		ctx.JSON(http.StatusOK, utils.Response{
+		ctx.JSON(http.StatusOK, types.DataResponse{
 			Code:        http.StatusOK,
 			Message:     "Home page data successfully retrieved.",
 			Ok:          true,
